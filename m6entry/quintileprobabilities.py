@@ -7,7 +7,8 @@ from m6entry.volatiitydata import all_vols
 
 
 def m6_probabilities(interval='d',n_dim=100, n_samples=5000, n_obs=200):
-    corrdf = m6_corr(interval=interval, n_dim=n_dim, n_obs=n_obs)
+    from precise.skaters.covariance.ewapm import ewa_pm_emp_scov_r01_n100_t0 as f
+    corrdf = m6_corr(f=f,interval=interval, n_dim=n_dim, n_obs=n_obs)
     tickers = list(corrdf.columns)
     vols = [ all_vols.get(t) for t in tickers ]
     nan_vols = [ np.nan if v is None else v for v in vols ]
