@@ -11,7 +11,7 @@ from precise.skatertools.m6.competition import m6_dump
 
 from pypfopt.efficient_frontier import EfficientFrontier
 from precise.skaters.portfoliostatic.schurport import schur_weak_weak_s5_g100_long_port as port
-from precise.skaters.portfoliostatic.weakport import weak_long_port as port
+
 
 if __name__=='__main__':
     df_cov = pd.read_csv(COV_FILE, index_col=0)
@@ -29,14 +29,9 @@ if __name__=='__main__':
     # Work with correlations and assume that volatility premium is roughly accurate
 
     mu = np.diag(cov)
-    risk_exponent = 0.1 # If >0 we make higher vol look relatively riskier
+    risk_exponent = 0.05 # If >0 we make higher vol look relatively riskier
     earnings_penalty = 1.1  # If >1 we make those with earnings look riskier, otherwise safer
-
-    LS = False
-    if LS:
-        exclusion_penalty = 10.0  # If >1, shy away from anything not explicitly listed
-    else:
-        exclusion_penalty = 1.02
+    exclusion_penalty = 1.  # If >1, shy away from anything not explicitly listed
 
     risk_penalties = np.exp(normalize(np.log(np.power(mu, risk_exponent))))
     exclusion_penalties  = np.array([exclusion_penalty if tck not in TICKERS_TO_INCLUDE else 1.0 for tck in tickers])
@@ -48,11 +43,20 @@ if __name__=='__main__':
     penalized_cov = nearest_pos_def(penalized_cov)
     long_w = port(cov=penalized_cov)
 
-    if LS:
-        w_ivv = np.array([1.0 if tck == 'IVV' else 0 for tck in tickers])
-        w_submit = 0.499*np.array(long_w) -0.499*w_ivv
-    else:
-        w_submit = [0.999*wi for wi in long_w]
+
+    w_ivv = np.array([1.0 if tck == 'IVV' else 0 for tck in tickers])
+    w_submit = 0.499*np.array(long_w) -0.499*w_ivv
+
+    CURVE_TRADE = False
+    if CURVE_TRADE:
+        # Completely override this and do a term structure trade for fun
+        w_shy = np.array([ 1/3.5 if tck=='SHY' else 0 for tck in tickers ])
+        w_ief = np.array([ -2/8.3 if tck == 'IEF' else 0 for tck in tickers])
+        w_tlt = np.array([ 1/14.6 if tck=='TLT' else 0 for tck in tickers ])
+        w_sum = sum(np.abs(w_shy))+sum(np.abs(w_tlt))+sum(np.abs(w_ief))
+        w_submit = (w_shy+w_tlt+w_ief)/w_sum
+
+
 
     print('Done portfolio opt')
     entry = df_prob.copy()
