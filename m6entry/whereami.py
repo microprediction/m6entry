@@ -10,6 +10,7 @@ PORT_FILE = os.path.join(TOP, 'outputdata/portfolios/', 'port_' + TODAY_STR + '.
 VOL_FILE = os.path.join(TOP, 'outputdata/impliedvols/', 'iv_' + TODAY_STR + '.csv')
 SUBMISSION_FILE = os.path.join(TOP, 'outputdata/submissions/', 'submission_' + TODAY_STR + '.csv')
 BETS_FILE = os.path.join(TOP, 'outputdata/bets/', 'bets_' + TODAY_STR + '.csv')
+M6_DATA = os.path.join(TOP, 'outputdata/history/', 'm6_data_' + TODAY_STR + '.csv')
 
 if __name__=='__main__':
     print(TOP)

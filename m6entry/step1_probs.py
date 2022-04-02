@@ -5,7 +5,7 @@ from precise.skaters.covariance.allcovskaters import ALL_D0_SKATERS
 from precise.skatertools.m6.quintileprobabilities import mvn_quintile_probabilities
 from m6entry.inputdata.volatiitydata import all_vols
 from m6entry.inputdata.earnings import TICKERS_WITH_EARNINGS_SOON
-from m6entry.whereami import RANK_FILE, COV_FILE, VOL_FILE
+from m6entry.whereami import RANK_FILE, COV_FILE, VOL_FILE, M6_DATA
 
 
 def m6_probabilities(interval='d',n_dim=100, n_samples=5000, n_obs=200):
