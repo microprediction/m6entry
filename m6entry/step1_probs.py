@@ -8,7 +8,7 @@ from m6entry.inputdata.earnings import TICKERS_WITH_EARNINGS_SOON
 from m6entry.whereami import RANK_FILE, COV_FILE, VOL_FILE, M6_DATA
 
 
-def m6_probabilities(interval='d',n_dim=100, n_samples=5000, n_obs=200):
+def m6_probabilities(interval='d',n_dim=100, n_samples=200000, n_obs=200):
     from precise.skaters.covariance.ewapm import ewa_pm_emp_scov_r01_n100_t0 as f
     corrdf = m6_corr(f=f,interval=interval, n_dim=n_dim, n_obs=n_obs)
 
@@ -26,7 +26,7 @@ def m6_probabilities(interval='d',n_dim=100, n_samples=5000, n_obs=200):
     vol_df.to_csv(VOL_FILE)
 
     # Shrink vols?
-    lmbd = 0.05
+    lmbd = 0.5
     shrunk_vols = [v * (1 - lmbd) + (lmbd) * mean_vol for v in clean_vols]
     normalized_vols = [ v/mean_vol for v in shrunk_vols ]
 
