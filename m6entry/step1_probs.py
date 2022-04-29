@@ -19,6 +19,9 @@ def m6_probabilities(interval='d',n_dim=100, n_samples=200000, n_obs=200):
     nan_vols = [ np.nan if v is None else v for v in vols ]
     mean_vol = np.nanmean(nan_vols)
     clean_vols = [ mean_vol if np.isnan(v) else v for v in nan_vols ]
+    # Make equity vol slightly bigger
+    clean_vols = [ 1.05*v for v in clean_vols[:50]] + clean_vols[50:]
+
     try:
         vol_df = pd.DataFrame(index=tickers, columns={'iv30'}, data=clean_vols)
     except Exception as e:
@@ -26,7 +29,7 @@ def m6_probabilities(interval='d',n_dim=100, n_samples=200000, n_obs=200):
     vol_df.to_csv(VOL_FILE)
 
     # Shrink vols?
-    lmbd = 0.5
+    lmbd = 0.35
     shrunk_vols = [v * (1 - lmbd) + (lmbd) * mean_vol for v in clean_vols]
     normalized_vols = [ v/mean_vol for v in shrunk_vols ]
 
@@ -35,13 +38,23 @@ def m6_probabilities(interval='d',n_dim=100, n_samples=200000, n_obs=200):
     sgma = np.matmul(np.matmul(D,corrdf.values), D)
     print('Starting simulation')
     p = mvn_quintile_probabilities(sgma=sgma, n_samples=n_samples)
+
+    if False:
+        # Add just a little to tails for equity, stealing from the middle
+        for i in range(50):
+            p_middle = p[2][i]
+            mass_to_move = 0.025*p_middle
+            p[0][i] += mass_to_move/2
+            p[4][i] += mass_to_move/2
+            p[2][i] -= mass_to_move
+
     df = pd.DataFrame(columns=tickers, data=p).transpose()
     df_cov = pd.DataFrame(columns=tickers, index=tickers, data=sgma)
     return df, df_cov
 
 
 if __name__=='__main__':
-    df, df_cov = m6_probabilities(interval='d',n_dim=100, n_obs=300, n_samples=20000)
+    df, df_cov = m6_probabilities(interval='d',n_dim=100, n_obs=300, n_samples=500000)
     print(df[:7])
     df.to_csv(RANK_FILE)
     df_cov.to_csv(COV_FILE)

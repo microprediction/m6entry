@@ -16,6 +16,17 @@ from precise.skaters.portfoliostatic.weakport import weak_long_port as port
 if __name__=='__main__':
     df_cov = pd.read_csv(COV_FILE, index_col=0)
     df_prob = pd.read_csv(RANK_FILE, index_col=0)
+
+    # Fix rounding
+    df_prob = df_prob.round(decimals=4)
+    excess = [v-1.0 for v in df_prob.sum(axis=1).values]
+    df_prob['2'] = df_prob['2'] - excess
+    df_prob = df_prob.round(decimals=4)
+    excess = [v - 1.0 for v in df_prob.sum(axis=1).values]
+    assert( sum(excess)<1e-8 )
+
+
+
     pprint(df_cov[:4])
     tickers = list(df_cov.columns)
     n_dim = len(df_cov.index)
@@ -56,8 +67,14 @@ if __name__=='__main__':
 
     print('Done portfolio opt')
     entry = df_prob.copy()
-    entry['Decision'] = [round(w_scaled_i,5) for w_scaled_i in w_submit]
+    entry['Decision'] = [round(w_scaled_i,4) for w_scaled_i in w_submit]
     entry.rename(inplace=True,columns={'0':'Rank1','1':'Rank2','2':'Rank3','3':'Rank4','4':'Rank5'})
+
+
+
+
+
+
     entry.to_csv(SUBMISSION_FILE)
     m6_dump(entry, SUBMISSION_FILE)
 
