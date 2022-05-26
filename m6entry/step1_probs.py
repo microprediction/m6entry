@@ -29,7 +29,7 @@ def m6_probabilities(interval='d',n_dim=100, n_samples=200000, n_obs=200):
     vol_df.to_csv(VOL_FILE)
 
     # Shrink vols?
-    lmbd = 0.35
+    lmbd = 0.25
     shrunk_vols = [v * (1 - lmbd) + (lmbd) * mean_vol for v in clean_vols]
     normalized_vols = [ v/mean_vol for v in shrunk_vols ]
 

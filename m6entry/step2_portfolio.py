@@ -11,7 +11,7 @@ from precise.skatertools.m6.competition import m6_dump
 
 from pypfopt.efficient_frontier import EfficientFrontier
 from precise.skaters.portfoliostatic.schurport import schur_weak_weak_s5_g100_long_port as port
-from precise.skaters.portfoliostatic.weakport import weak_long_port as port
+from precise.skaters.portfoliostatic.weakport import weak_h125_long_port as port
 
 if __name__=='__main__':
     df_cov = pd.read_csv(COV_FILE, index_col=0)
