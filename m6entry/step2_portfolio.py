@@ -10,8 +10,9 @@ from m6entry.inputdata.inclusion import TICKERS_TO_INCLUDE
 from precise.skatertools.m6.competition import m6_dump
 
 from pypfopt.efficient_frontier import EfficientFrontier
-from precise.skaters.portfoliostatic.schurport import schur_weak_weak_s5_g100_long_port as port
 from precise.skaters.portfoliostatic.weakport import weak_h125_long_port as port
+from precise.skaters.portfoliostatic.schurport import schur_weak_weak_s5_g100_long_port as port
+
 
 if __name__=='__main__':
     df_cov = pd.read_csv(COV_FILE, index_col=0)
@@ -39,9 +40,9 @@ if __name__=='__main__':
 
     # Work with correlations and assume that volatility premium is roughly accurate
 
-    mu = np.diag(cov)
-    risk_exponent = 0.1 # If >0 we make higher vol look relatively riskier
-    earnings_penalty = 1.1  # If >1 we make those with earnings look riskier, otherwise safer
+    mu = (2 + np.diag(cov))/3
+    risk_exponent = 0.5 # If >0 we make higher vol look relatively riskier
+    earnings_penalty = 1.1  # If >1 we make those with earnings look even riskier, otherwise safer
 
     LS = False
     if LS:
