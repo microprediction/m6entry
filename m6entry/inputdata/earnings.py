@@ -1,3 +1,3 @@
 
 # Stock with imminent earnings
-TICKERS_WITH_EARNINGS_SOON = ['ABBV']
+TICKERS_WITH_EARNINGS_SOON = []
